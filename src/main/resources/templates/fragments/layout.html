@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${(config != null ? config.name + ' — ' : '') + pageTitle}">My Restaurant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <style th:if="${config != null}" th:inline="text">:root { --accent: [[${config.themeColor}]]; }</style>
+</head>
+
+<body>
+
+<header th:fragment="header(active)" class="site-header">
+    <div class="inner">
+        <a class="brand" th:href="@{/}">
+            <span class="seal" th:text="${config != null and config.name != null and !config.name.isEmpty()} ? ${config.name.substring(0,1)} : '和'">和</span>
+            <span th:text="${config != null} ? ${config.name} : 'My Restaurant'">My Restaurant</span>
+        </a>
+        <nav class="main-nav">
+            <a th:href="@{/}" th:classappend="${active == 'home'} ? 'active'">Accueil</a>
+            <a th:href="@{/carte}" th:classappend="${active == 'carte'} ? 'active'">La carte</a>
+            <a th:href="@{/menus}" th:classappend="${active == 'menus'} ? 'active'">Les menus</a>
+            <a th:href="@{/admin}" sec:authorize="isAuthenticated()">Admin</a>
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()">Connexion</a>
+            <form th:action="@{/logout}" method="post" class="nav-logout-form" sec:authorize="isAuthenticated()">
+                <button type="submit" class="nav-logout">Déconnexion</button>
+            </form>
+        </nav>
+    </div>
+</header>
+
+<!--
+  Banniere de page (hero) : meme rendu que l'accueil, mais avec le titre de la
+  page par-dessus. Defile avec la page (n'est pas collee au header sticky).
+-->
+<section th:fragment="hero(kicker, title)" class="hero">
+    <img class="hero-banner" alt=""
+         th:src="${config != null and config.bannerImage != null} ? @{'/uploads/' + ${config.bannerImage}} : @{/placeholder(label=${title},w=1600,h=600)}"/>
+    <div class="hero-content">
+        <span class="kicker" style="color:#fff;" th:text="${kicker}">Kicker</span>
+        <h1 th:text="${title}">Titre</h1>
+    </div>
+</section>
+
+<footer th:fragment="footer" class="site-footer">
+    <div class="container cols" th:if="${config != null}">
+        <div>
+            <h4 th:text="${config.name}">My Restaurant</h4>
+            <p class="muted" th:text="${config.address}">Adresse</p>
+        </div>
+        <div>
+            <h4>Contact</h4>
+            <p th:if="${config.phone}" th:text="${config.phone}">01 23 45 67 89</p>
+            <p th:if="${config.email}"><a th:href="'mailto:' + ${config.email}" th:text="${config.email}">contact@</a></p>
+        </div>
+        <div>
+            <h4>Infos pratiques</h4>
+            <p class="muted" style="white-space: pre-line" th:text="${config.practicalInfo}">Horaires</p>
+        </div>
+    </div>
+    <div class="container center" style="margin-top:24px; opacity:.6;">
+        <small th:text="'© ' + ${#dates.format(#dates.createNow(), 'yyyy')} + ' ' + (${config != null} ? ${config.name} : 'My Restaurant')">© My Restaurant</small>
+    </div>
+</footer>
+
+</body>
+</html>

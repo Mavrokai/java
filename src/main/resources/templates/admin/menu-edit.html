@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin — Édition')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<div class="admin-shell">
+    <aside th:replace="~{fragments/admin :: sidebar(${isCarte} ? 'carte' : 'menus')}"></aside>
+    <main class="admin-main">
+        <div class="toolbar">
+            <h1 th:text="${isCarte} ? 'La carte' : 'Menu : ' + ${menu.name}">Édition</h1>
+            <a th:unless="${isCarte}" class="btn btn-ghost btn-sm" th:href="@{/admin/menus}">← Retour</a>
+        </div>
+        <div th:replace="~{fragments/admin :: flash}"></div>
+
+        <div class="card">
+            <h3 style="margin-top:0;" th:text="${isCarte} ? 'Intitulé de la carte' : 'Détails du menu'">Détails</h3>
+            <form th:action="@{'/admin/menus/' + ${menu.id}}" method="post">
+                <div class="field">
+                    <label for="name">Nom *</label>
+                    <input type="text" id="name" name="name" th:value="${menu.name}" required/>
+                </div>
+                <div th:unless="${isCarte}">
+                    <div class="field">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" th:text="${menu.description}"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="field">
+                            <label for="price">Prix (€)</label>
+                            <input type="number" step="0.01" id="price" name="price" th:value="${menu.price}"/>
+                        </div>
+                        <div class="field">
+                            <label for="position">Position</label>
+                            <input type="number" id="position" name="position" th:value="${menu.position}"/>
+                        </div>
+                    </div>
+                </div>
+                <input th:if="${isCarte}" type="hidden" name="position" th:value="${menu.position}"/>
+                <button type="submit" class="btn">Enregistrer</button>
+            </form>
+        </div>
+
+        <div class="card mt">
+            <h3 style="margin-top:0;">Sections</h3>
+            <p th:if="${#lists.isEmpty(menu.sections)}" class="muted">Aucune section. Ajoutez-en une ci-dessous.</p>
+
+            <div th:each="s : ${menu.sections}" style="border-bottom:1px solid var(--line); padding:14px 0;">
+                <form th:action="@{'/admin/sections/' + ${s.id}}" method="post" class="row" style="align-items:flex-end;">
+                    <div class="field" style="margin-bottom:0;">
+                        <label>Nom</label>
+                        <input type="text" name="name" th:value="${s.name}"/>
+                    </div>
+                    <div class="field" style="margin-bottom:0; max-width:120px;">
+                        <label>Position</label>
+                        <input type="number" name="position" th:value="${s.position}"/>
+                    </div>
+                    <div style="margin-bottom:0;">
+                        <button type="submit" class="btn btn-sm">Mettre à jour</button>
+                    </div>
+                    <div class="muted" style="margin-bottom:8px;" th:text="${#sets.size(s.dishes)} + ' plat(s)'">0 plat(s)</div>
+                </form>
+                <form class="inline-form" th:action="@{'/admin/sections/' + ${s.id} + '/delete'}" method="post"
+                      onsubmit="return confirm('Supprimer cette section ?');">
+                    <button type="submit" class="btn btn-danger btn-sm" style="margin-top:8px;">Supprimer la section</button>
+                </form>
+            </div>
+
+            <form th:action="@{'/admin/menus/' + ${menu.id} + '/sections'}" method="post" class="row mt" style="align-items:flex-end;">
+                <div class="field" style="margin-bottom:0;">
+                    <label>Nouvelle section</label>
+                    <input type="text" name="name" placeholder="Entrées, Sushis, Desserts…" required/>
+                </div>
+                <div class="field" style="margin-bottom:0; max-width:120px;">
+                    <label>Position</label>
+                    <input type="number" name="position" value="0"/>
+                </div>
+                <div>
+                    <button type="submit" class="btn">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+</body>
+</html>

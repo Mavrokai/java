@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin — Menus')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<div class="admin-shell">
+    <aside th:replace="~{fragments/admin :: sidebar('menus')}"></aside>
+    <main class="admin-main">
+        <h1>Les menus</h1>
+        <div th:replace="~{fragments/admin :: flash}"></div>
+
+        <table th:if="${!#lists.isEmpty(menus)}">
+            <thead>
+            <tr><th>Nom</th><th>Prix</th><th>Sections</th><th>Position</th><th></th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${menus}">
+                <td><a th:href="@{'/admin/menus/' + ${m.id}}" th:text="${m.name}">Menu</a></td>
+                <td th:text="${m.price != null} ? ${#numbers.formatDecimal(m.price,1,2,'COMMA')} + ' €' : '—'">—</td>
+                <td th:text="${#lists.size(m.sections)}">0</td>
+                <td th:text="${m.position}">0</td>
+                <td>
+                    <form class="inline-form" th:action="@{'/admin/menus/' + ${m.id} + '/delete'}" method="post"
+                          onsubmit="return confirm('Supprimer ce menu ?');">
+                        <button class="btn btn-danger btn-sm" type="submit">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(menus)}" class="muted">Aucun menu. Créez-en un ci-dessous.</p>
+
+        <div class="card mt">
+            <h3 style="margin-top:0;">Nouveau menu</h3>
+            <form th:action="@{/admin/menus}" method="post">
+                <div class="field">
+                    <label for="name">Nom *</label>
+                    <input type="text" id="name" name="name" required placeholder="Menu Découverte"/>
+                </div>
+                <div class="field">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description"></textarea>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="price">Prix (€)</label>
+                        <input type="number" step="0.01" id="price" name="price"/>
+                    </div>
+                    <div class="field">
+                        <label for="position">Position</label>
+                        <input type="number" id="position" name="position" value="0"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Créer le menu</button>
+            </form>
+        </div>
+    </main>
+</div>
+</body>
+</html>

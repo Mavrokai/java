@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin — Plats')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<div class="admin-shell">
+    <aside th:replace="~{fragments/admin :: sidebar('dishes')}"></aside>
+    <main class="admin-main">
+        <div class="toolbar">
+            <h1>Les plats</h1>
+            <a class="btn" th:href="@{/admin/dishes/new}">+ Nouveau plat</a>
+        </div>
+        <div th:replace="~{fragments/admin :: flash}"></div>
+
+        <table th:if="${!#lists.isEmpty(dishes)}">
+            <thead>
+            <tr><th></th><th>Nom</th><th>Prix</th><th>Allergènes</th><th></th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="d : ${dishes}">
+                <td style="width:64px;">
+                    <img th:src="${d.photo != null} ? @{'/uploads/' + ${d.photo}} : @{/placeholder(label=${d.name},w=80,h=60)}"
+                         style="width:56px; height:42px; object-fit:cover; border-radius:3px;" th:alt="${d.name}"/>
+                </td>
+                <td th:text="${d.name}">Plat</td>
+                <td th:text="${#numbers.formatDecimal(d.price,1,2,'COMMA')} + ' €'">0,00 €</td>
+                <td>
+                    <span class="muted" th:text="${#sets.isEmpty(d.allergens)} ? '—' : ${#strings.listJoin(d.allergens, ', ')}">—</span>
+                </td>
+                <td style="white-space:nowrap;">
+                    <a class="btn btn-ghost btn-sm" th:href="@{'/admin/dishes/' + ${d.id} + '/edit'}">Éditer</a>
+                    <form class="inline-form" th:action="@{'/admin/dishes/' + ${d.id} + '/delete'}" method="post"
+                          onsubmit="return confirm('Supprimer ce plat ?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Suppr.</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(dishes)}" class="muted">Aucun plat. Créez-en un avec le bouton ci-dessus.</p>
+    </main>
+</div>
+</body>
+</html>

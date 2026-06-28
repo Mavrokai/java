@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<aside th:fragment="sidebar(active)" class="admin-side">
+    <a class="brand" th:href="@{/}" th:text="${config != null} ? config.name : 'My Restaurant'">My Restaurant</a>
+    <a th:href="@{/admin}" th:classappend="${active == 'dashboard'} ? 'active'">Tableau de bord</a>
+    <a th:href="@{/admin/carte}" th:classappend="${active == 'carte'} ? 'active'">La carte</a>
+    <a th:href="@{/admin/menus}" th:classappend="${active == 'menus'} ? 'active'">Les menus</a>
+    <a th:href="@{/admin/dishes}" th:classappend="${active == 'dishes'} ? 'active'">Les plats</a>
+    <a th:href="@{/admin/reviews}" th:classappend="${active == 'reviews'} ? 'active'">Les avis</a>
+    <a th:href="@{/setup}">Configuration</a>
+    <form th:action="@{/logout}" method="post" style="padding:11px 24px;">
+        <button type="submit" class="btn btn-ghost btn-sm" style="color:#cdc4b6; border-color:#4a443c;">Déconnexion</button>
+    </form>
+</aside>
+
+<div th:fragment="flash" th:if="${flash}" class="flash" th:text="${flash}"></div>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<div class="admin-shell">
+    <aside th:replace="~{fragments/admin :: sidebar('dashboard')}"></aside>
+    <main class="admin-main">
+        <h1>Tableau de bord</h1>
+        <div th:replace="~{fragments/admin :: flash}"></div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="num" th:text="${dishCount}">0</div>
+                <div class="lbl">Plats</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" th:text="${menuCount}">0</div>
+                <div class="lbl">Menus</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" th:text="${#lists.size(carte.sections)}">0</div>
+                <div class="lbl">Sections de la carte</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" th:text="${reviewCount}">0</div>
+                <div class="lbl">Avis</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top:0;">Étapes de configuration du contenu</h3>
+            <ol>
+                <li>Composez <a th:href="@{/admin/carte}">la carte</a> en créant ses sections.</li>
+                <li>Créez vos <a th:href="@{/admin/menus}">menus</a> et leurs sections.</li>
+                <li>Ajoutez vos <a th:href="@{/admin/dishes}">plats</a> et assignez-les aux sections.</li>
+                <li>Modérez les <a th:href="@{/admin/reviews}">avis</a> clients.</li>
+            </ol>
+        </div>
+
+        <div class="card danger-zone mt">
+            <h3 style="margin-top:0;">Zone de danger</h3>
+            <p class="muted">Ces actions sont irréversibles.</p>
+            <div class="danger-actions">
+                <form th:action="@{/admin/data/clear-content}" method="post"
+                      onsubmit="return confirm('Supprimer TOUT le contenu (menus, plats, avis) ? La configuration du site est conservée. Cette action est irréversible.');">
+                    <button type="submit" class="btn btn-danger">Supprimer tout le contenu</button>
+                    <span class="hint">Menus, plats et avis. La configuration reste en place.</span>
+                </form>
+                <form th:action="@{/admin/data/reset-all}" method="post"
+                      onsubmit="return confirm('Réinitialiser ENTIÈREMENT le site (contenu + configuration) ? Vous devrez refaire la configuration initiale. Cette action est irréversible.');">
+                    <button type="submit" class="btn btn-danger">Réinitialiser entièrement le site</button>
+                    <span class="hint">Contenu + configuration. Retour à la page de setup.</span>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

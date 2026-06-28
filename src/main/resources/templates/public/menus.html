@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Les menus')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('menus')}"></header>
+
+<section th:replace="~{fragments/layout :: hero('Formules', 'Nos menus')}"></section>
+
+<section class="block">
+    <div class="container">
+        <p th:if="${#lists.isEmpty(menus)}" class="muted center">Aucun menu disponible pour le moment.</p>
+
+        <div th:each="menu : ${menus}" style="margin-bottom:48px;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; border-bottom:2px solid var(--accent); padding-bottom:8px; margin-bottom:24px;">
+                <h2 style="margin:0;" th:text="${menu.name}">Menu</h2>
+                <span class="price" style="font-size:1.4rem;" th:if="${menu.price != null}"
+                      th:text="${#numbers.formatDecimal(menu.price, 1, 2, 'COMMA')} + ' €'">0,00 €</span>
+            </div>
+            <p class="muted" th:if="${menu.description}" th:text="${menu.description}">Description</p>
+            <div th:replace="~{fragments/menu :: sections(${menu})}"></div>
+        </div>
+    </div>
+</section>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

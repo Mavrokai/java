@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin — Avis')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<div class="admin-shell">
+    <aside th:replace="~{fragments/admin :: sidebar('reviews')}"></aside>
+    <main class="admin-main">
+        <h1>Les avis</h1>
+        <div th:replace="~{fragments/admin :: flash}"></div>
+
+        <table th:if="${!#lists.isEmpty(reviews)}">
+            <thead>
+            <tr><th>Date</th><th>Note</th><th>Auteur</th><th>Commentaire</th><th></th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${reviews}">
+                <td th:text="${#temporals.format(r.date, 'dd/MM/yyyy')}">date</td>
+                <td class="stars">
+                    <span th:each="i : ${#numbers.sequence(1,5)}"
+                          th:classappend="${i > r.rating} ? 'off'"
+                          th:text="${i <= r.rating} ? '★' : '☆'">★</span>
+                </td>
+                <td>
+                    <span th:text="${r.authorName}">Nom</span>
+                    <div class="muted" th:if="${r.email}" th:text="${r.email}">email</div>
+                </td>
+                <td th:text="${r.comment}">Commentaire</td>
+                <td>
+                    <form class="inline-form" th:action="@{'/admin/reviews/' + ${r.id} + '/delete'}" method="post"
+                          onsubmit="return confirm('Supprimer cet avis ?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(reviews)}" class="muted">Aucun avis pour le moment.</p>
+    </main>
+</div>
+</body>
+</html>

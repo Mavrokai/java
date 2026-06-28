@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('La carte')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('carte')}"></header>
+
+<section th:replace="~{fragments/layout :: hero('À table', 'La carte')}"></section>
+
+<section class="block">
+    <div class="container">
+        <div th:replace="~{fragments/menu :: sections(${carte})}"></div>
+    </div>
+</section>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

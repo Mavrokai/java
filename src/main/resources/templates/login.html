@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Connexion admin')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+
+<section class="block">
+    <div class="container-narrow" style="max-width:420px;">
+        <div class="section-title">
+            <span class="kicker">Espace réservé</span>
+            <h2>Administration</h2>
+        </div>
+
+        <div class="alert" th:if="${param.error}">Mot de passe incorrect.</div>
+        <div class="flash" th:if="${param.logout}">Vous êtes déconnecté.</div>
+
+        <form class="card" th:action="@{/login}" method="post">
+            <input type="hidden" name="username" value="admin"/>
+            <div class="field">
+                <label for="password">Mot de passe administrateur</label>
+                <input type="password" id="password" name="password" autocomplete="current-password" autofocus/>
+            </div>
+            <button type="submit" class="btn">Se connecter</button>
+        </form>
+    </div>
+</section>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

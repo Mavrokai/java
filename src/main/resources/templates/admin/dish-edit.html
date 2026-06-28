@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin — Plat')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<div class="admin-shell">
+    <aside th:replace="~{fragments/admin :: sidebar('dishes')}"></aside>
+    <main class="admin-main">
+        <div class="toolbar">
+            <h1 th:text="${dish.id != null} ? 'Modifier le plat' : 'Nouveau plat'">Plat</h1>
+            <a class="btn btn-ghost btn-sm" th:href="@{/admin/dishes}">← Retour</a>
+        </div>
+
+        <form class="card" th:action="@{/admin/dishes}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" th:if="${dish.id != null}" th:value="${dish.id}"/>
+
+            <div class="field">
+                <label for="name">Nom du plat *</label>
+                <input type="text" id="name" name="name" th:value="${dish.name}" required/>
+            </div>
+
+            <div class="field">
+                <label for="description">Brève description</label>
+                <textarea id="description" name="description" th:text="${dish.description}"></textarea>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="price">Prix (€) *</label>
+                    <input type="number" step="0.01" id="price" name="price" th:value="${dish.price}" required/>
+                </div>
+                <div class="field">
+                    <label for="photo">Photo</label>
+                    <input type="file" id="photo" name="photo" accept="image/*"/>
+                    <div class="hint" th:if="${dish.photo != null}">Une photo est déjà associée. Laisser vide pour la conserver.</div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Allergènes</label>
+                <div class="checkbox-grid">
+                    <label th:each="a : ${allergens}">
+                        <input type="checkbox" name="allergens" th:value="${a.name()}"
+                               th:checked="${dish.allergens.contains(a)}"/>
+                        <span th:text="${a.label}">Allergène</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Assignation aux sections</label>
+                <div class="hint" style="margin-bottom:10px;">Cochez les sections (carte et/ou menus) où ce plat doit apparaître.</div>
+                <div th:each="owner : ${owners}" style="margin-bottom:14px;">
+                    <strong th:text="${owner.carte} ? 'La carte' : ${owner.name}">Propriétaire</strong>
+                    <p th:if="${#lists.isEmpty(owner.sections)}" class="muted" style="margin:4px 0;">Aucune section.</p>
+                    <div class="checkbox-grid" th:unless="${#lists.isEmpty(owner.sections)}" style="margin-top:6px;">
+                        <label th:each="s : ${owner.sections}">
+                            <input type="checkbox" name="sectionIds" th:value="${s.id}"
+                                   th:checked="${selectedSectionIds.contains(s.id)}"/>
+                            <span th:text="${s.name}">Section</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Enregistrer le plat</button>
+        </form>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="sections(menu)">
+    <p th:if="${#lists.isEmpty(menu.sections)}" class="muted center">Aucune section pour le moment.</p>
+    <div class="menu-section" th:each="section : ${menu.sections}">
+        <h3 th:text="${section.name}">Section</h3>
+        <p th:if="${#sets.isEmpty(section.dishes)}" class="muted">Aucun plat dans cette section.</p>
+        <div class="dish-grid" th:unless="${#sets.isEmpty(section.dishes)}">
+            <article class="dish-card" th:each="dish : ${section.dishes}">
+                <img th:src="${dish.photo != null} ? @{'/uploads/' + ${dish.photo}} : @{/placeholder(label=${dish.name},w=400,h=300)}"
+                     th:alt="${dish.name}"/>
+                <div class="body">
+                    <h4 th:text="${dish.name}">Plat</h4>
+                    <p class="desc" th:text="${dish.description}">Description</p>
+                    <div class="allergens" th:if="${!#sets.isEmpty(dish.allergens)}">
+                        <span class="allergen-tag" th:each="a : ${dish.allergens}" th:text="${a.label}">Allergène</span>
+                    </div>
+                    <div class="price" th:text="${#numbers.formatDecimal(dish.price, 1, 2, 'COMMA')} + ' €'">0,00 €</div>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

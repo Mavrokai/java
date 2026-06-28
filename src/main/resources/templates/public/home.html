@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Accueil')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('home')}"></header>
+
+<section class="hero">
+    <img class="hero-banner" alt=""
+         th:src="${config != null and config.bannerImage != null} ? @{'/uploads/' + ${config.bannerImage}} : @{/placeholder(label=${config != null} ? config.name : 'My Restaurant',w=1600,h=600)}"/>
+    <div class="hero-content">
+        <h1 th:text="${config != null} ? config.name : 'My Restaurant'">My Restaurant</h1>
+        <p>Bienvenue — découvrez notre cuisine</p>
+    </div>
+</section>
+
+<section class="block">
+    <div class="container">
+        <div class="section-title">
+            <span class="kicker">Le restaurant</span>
+            <h2>Informations pratiques</h2>
+        </div>
+        <div class="info-grid" th:if="${config != null}">
+            <div class="info-card">
+                <h4>Adresse</h4>
+                <p th:text="${config.address}">Adresse</p>
+            </div>
+            <div class="info-card" th:if="${config.phone != null or config.email != null}">
+                <h4>Contact</h4>
+                <p th:if="${config.phone}" th:text="${config.phone}">Téléphone</p>
+                <p th:if="${config.email}"><a th:href="'mailto:' + ${config.email}" th:text="${config.email}">Email</a></p>
+            </div>
+            <div class="info-card" th:if="${config.practicalInfo}">
+                <h4>Horaires</h4>
+                <p style="white-space: pre-line" th:text="${config.practicalInfo}">Horaires</p>
+            </div>
+        </div>
+        <div class="center mt">
+            <a class="btn" th:href="@{/carte}">Voir la carte</a>
+            <a class="btn btn-ghost" th:href="@{/menus}">Nos menus</a>
+        </div>
+    </div>
+</section>
+
+<section class="block alt" id="avis">
+    <div class="container">
+        <div class="section-title">
+            <span class="kicker">Vos retours</span>
+            <h2>Derniers avis</h2>
+        </div>
+
+        <div class="flash" th:if="${reviewSuccess}">Merci ! Votre avis a bien été enregistré.</div>
+        <div class="alert" th:if="${reviewError}">Veuillez corriger les erreurs du formulaire.</div>
+
+        <div class="review-grid" th:if="${!#lists.isEmpty(reviews)}">
+            <div class="review-card" th:each="r : ${reviews}">
+                <div class="stars">
+                    <span th:each="i : ${#numbers.sequence(1,5)}"
+                          th:classappend="${i > r.rating} ? 'off'"
+                          th:text="${i <= r.rating} ? '★' : '☆'">★</span>
+                </div>
+                <p th:if="${r.comment}" th:text="${r.comment}">Commentaire</p>
+                <div class="meta">
+                    <strong th:text="${r.authorName}">Nom</strong>
+                    · <span th:text="${#temporals.format(r.date, 'dd/MM/yyyy')}">date</span>
+                </div>
+            </div>
+        </div>
+        <p th:if="${#lists.isEmpty(reviews)}" class="muted center">Soyez le premier à laisser un avis.</p>
+
+        <div class="card mt" style="max-width:560px; margin-left:auto; margin-right:auto;">
+            <h3 style="margin-top:0;">Laisser un avis</h3>
+            <form th:action="@{/reviews}" th:object="${review}" method="post">
+                <div class="row">
+                    <div class="field">
+                        <label for="authorName">Nom *</label>
+                        <input type="text" id="authorName" th:field="*{authorName}"/>
+                        <div class="field-error" th:if="${#fields.hasErrors('authorName')}" th:errors="*{authorName}"></div>
+                    </div>
+                    <div class="field">
+                        <label for="email">Email (optionnel)</label>
+                        <input type="email" id="email" th:field="*{email}"/>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" th:field="*{date}"/>
+                </div>
+                <div class="field">
+                    <label for="rating">Note *</label>
+                    <select id="rating" th:field="*{rating}">
+                        <option value="5">★★★★★ — Excellent</option>
+                        <option value="4">★★★★ — Très bien</option>
+                        <option value="3">★★★ — Bien</option>
+                        <option value="2">★★ — Moyen</option>
+                        <option value="1">★ — Décevant</option>
+                    </select>
+                    <div class="field-error" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
+                </div>
+                <div class="field">
+                    <label for="comment">Commentaire (optionnel)</label>
+                    <textarea id="comment" th:field="*{comment}"></textarea>
+                </div>
+                <button type="submit" class="btn">Envoyer mon avis</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

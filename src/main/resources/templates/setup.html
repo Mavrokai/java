@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Configuration')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+
+<section class="block">
+    <div class="container-narrow">
+        <div class="section-title">
+            <span class="kicker">Bienvenue</span>
+            <h2 th:text="${alreadyConfigured} ? 'Modifier la configuration' : 'Configuration de votre site'">Configuration</h2>
+            <p class="muted">Renseignez les informations de base avant de mettre votre site en ligne.</p>
+        </div>
+
+        <div class="alert" th:if="${uploadError}" th:text="${uploadError}">Erreur upload</div>
+
+        <form class="card" th:action="@{/setup}" th:object="${setupForm}" method="post" enctype="multipart/form-data">
+            <div class="field">
+                <label for="name">Nom du restaurant *</label>
+                <input type="text" id="name" th:field="*{name}" placeholder="Sakura Izakaya"/>
+                <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            </div>
+
+            <div class="field">
+                <label for="url">URL du site *</label>
+                <input type="url" id="url" th:field="*{url}" placeholder="http://localhost:8080"/>
+                <div class="field-error" th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="themeColor">Couleur d'accent *</label>
+                    <input type="color" id="themeColor" th:field="*{themeColor}"/>
+                    <div class="hint">Liens, menus, boutons…</div>
+                    <div class="field-error" th:if="${#fields.hasErrors('themeColor')}" th:errors="*{themeColor}"></div>
+                </div>
+                <div class="field">
+                    <label for="banner">Bannière du header</label>
+                    <input type="file" id="banner" name="banner" accept="image/*"/>
+                    <div class="hint">JPG, PNG ou GIF animé — max. 20 Mo.</div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="adminPassword">Mot de passe administrateur *</label>
+                <input type="password" id="adminPassword" th:field="*{adminPassword}" autocomplete="new-password"/>
+                <div class="hint">Min. 8 caractères, 1 minuscule, 1 majuscule, 1 chiffre.</div>
+                <div class="field-error" th:if="${#fields.hasErrors('adminPassword')}" th:errors="*{adminPassword}"></div>
+            </div>
+
+            <h3 style="margin-top:28px;">Informations restaurant</h3>
+
+            <div class="field">
+                <label for="address">Adresse *</label>
+                <input type="text" id="address" th:field="*{address}" placeholder="12 rue de la Paix, 75002 Paris"/>
+                <div class="field-error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="phone">Téléphone</label>
+                    <input type="text" id="phone" th:field="*{phone}" placeholder="01 23 45 67 89"/>
+                </div>
+                <div class="field">
+                    <label for="email">Email de contact</label>
+                    <input type="email" id="email" th:field="*{email}" placeholder="contact@restaurant.fr"/>
+                    <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="practicalInfo">Informations pratiques (horaires…)</label>
+                <textarea id="practicalInfo" th:field="*{practicalInfo}" placeholder="Ouvert du mardi au dimanche, 12h–14h30 et 19h–22h30"></textarea>
+            </div>
+
+            <button type="submit" class="btn">Enregistrer et lancer le site</button>
+        </form>
+    </div>
+</section>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
